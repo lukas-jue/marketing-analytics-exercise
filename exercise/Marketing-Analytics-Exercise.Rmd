@@ -1,0 +1,214 @@
+---
+title: "Teaching Marketing Analytics: A Pricing Exercise for Quantitative and Substantive Marketing Skills"
+author: "Authors anonymized for peer review"
+output:
+  html_notebook:
+    theme: united
+    toc: yes
+    toc_float: no
+    toc_depth: 3
+    number_sections: no
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, echo=FALSE}
+options(scipen = 999)
+```
+
+Your B2B firm sells an energy-efficient heater fan and has divided the
+country into 100 comparable sales territories, each staffed exclusively
+by a female sales representative. The sales representatives differ
+according to their professional experience (measured by the number of
+years they have been in sales) and whether they have an engineering
+degree.
+
+The management recently stated that 50% of the sales representatives
+have at least five years of professional experience in sales, and at
+least one-third of the sales representatives also have an engineering
+degree.
+
+The firm's management randomly varied the prices across the sales
+territories.
+
+In addition, the management commissioned an advertising agency to
+support the sales representatives through marketing and provided a
+dedicated budget. The agency should use this marketing budget for
+telephone marketing and social media marketing, with an approximately
+equal allocation towards the two channels (i.e., 50% phone calls and 50%
+social media marketing). So far, the firm's management has randomly
+varied the agency's budget across the sales territories.
+
+The variable cost per unit of a heater fan is \$200.
+
+In the file `data_sales.csv`, you receive information that helps you
+answer the questions. The data set includes 100 rows, each describing
+one of the 100 sales territories with the following variables:
+
++---------------------+----------------------------------------+
+| Variable            | Description                            |
++:====================+:=======================================+
+| `quantity`          | Number of sold heater fans in the      |
+|                     | respective sales territory.            |
++---------------------+----------------------------------------+
+| `price`             | Price of the heater fan sold in the    |
+|                     | respective sales territory.            |
++---------------------+----------------------------------------+
+| `experience`        | Number of years the sales              |
+|                     | representative has been working in     |
+|                     | sales.                                 |
++---------------------+----------------------------------------+
+| `engineer`          | Binary variable indicating whether the |
+|                     | sales representative has an            |
+|                     | engineering degree (= 1) or not (= 0). |
++---------------------+----------------------------------------+
+| `gender`            | Gender of the sales representative,    |
+|                     | female (= 1) or other (= 0).           |
++---------------------+----------------------------------------+
+| `location`          | Number of letters of the sales         |
+|                     | representative's birthplace (e.g., 7   |
+|                     | if the birthplace is "Chicago").       |
++---------------------+----------------------------------------+
+| `budget_agency`     | Budget used by the advertising agency, |
+|                     | which is either spent for phone or     |
+|                     | social media marketing, in \$.         |
++---------------------+----------------------------------------+
+| `budget_phone`      | Budget used for telephone marketing,   |
+|                     | in \$.                                 |
++---------------------+----------------------------------------+
+| `b                  | Budget used for social media           |
+| udget_social_media` | marketing, in \$.                      |
++---------------------+----------------------------------------+
+
+: Table 1: Description of the Data Set `data_sales.csv`
+
+## 1) Exploratory Data Analysis
+
+*For each part of this first exercise, please answer the question by
+analyzing the data set through one visualization and one non-visual
+descriptive analysis.*
+
+*We do not require custom labels for the visualizations.*
+
+### a)
+
+Does the firm only employ female sales representatives? (2 points)
+
+### b)
+
+Do the prices differ across sales territories? (2 points)
+
+### c)
+
+Is the management's statement regarding the professional experience of
+their sales representatives correct? (2 points)
+
+### d)
+
+Is the management's statement regarding the background of their sales
+representatives correct? (2 points)
+
+### e)
+
+Does the advertising agency's budget differ across the sales
+territories? (2 points)
+
+### f)
+
+Did the advertising agency achieve the aim of approximately equally
+allocating the budget to the two channels (telephone and social media
+marketing)? (2 points)
+
+### g)
+
+Were the sales representatives born in at least 8 different cities? (2
+points)
+
+## 2) Estimating a Demand Function
+
+Estimate a linear demand function. Justify which variables you include
+and which ones you ignore. Discuss the influence of price and
+professional experience on the quantity and how confident you are about
+their influence. (14 points)
+
+## 3) Compute Advertising and Price Elasticities of Demand
+
+Use your model to compute the price elasticity of demand and the
+(advertising) budget elasticity of demand. Interpret these elasticities
+and assess whether your computed elasticities are consistent with
+economic intuition. (12 Points)
+
+## 4) Determine the Optimal Price
+
+A sales representative with three years of professional experience and
+an engineering degree operates in a sales territory. In addition, the
+advertising agency spends a budget of \$2,000, allocating 50% to
+telephone and 50% to social media marketing. Determine the optimal price
+in this setting and explain the steps you take to arrive at your result.
+Assume fixed costs of zero. What is the contribution margin per unit and
+the firm's profit? (20 points)
+
+## 5) Impact of Changes on Optimal Prices
+
+Answer the following two sub-questions by ticking the correct answer.
+
+### a)
+
+How does the optimal price change if a sales representative without an
+engineering degree works in the sales territory instead of a sales
+representative with an engineering degree? (2 points)
+
+The optimal price...
+
+-   increases
+-   decreases
+-   remains about the same
+-   no statement possible
+
+### b)
+
+How does the optimal price change if a sales representative with only
+one year of professional experience works in the sales territory instead
+of a sales representative with three years of professional experience?
+(2 points)
+
+The optimal price...
+
+-   increases
+-   decreases
+-   remains about the same
+-   no statement possible
+
+## 6) Marketing Budget Allocation
+
+The management wants to know whether it should spend the marketing
+budget on telephone marketing or social media marketing. Which
+recommendation can you give based on your analyses? (2 points)
+
+## 7) Performance and Compensation of Sales Representatives
+
+#### a)
+
+Do female sales representatives sell more than non-female sales
+representatives? (2 points)
+
+*Answer this question based on your previous results.*
+
+#### b)
+
+Do business outcomes justify paying sales representatives with an
+engineering degree a higher salary than those without an engineering
+degree? (2 points)
+
+*Answer this question based on your previous results.*
+
+#### c)
+
+Do business outcomes justify paying sales representatives with more
+professional experience a higher salary than those with less
+professional experience? (2 points)
+
+*Answer this question based on your previous results.*
+
+

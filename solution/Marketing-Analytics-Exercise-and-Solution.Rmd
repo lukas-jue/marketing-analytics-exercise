@@ -1,0 +1,866 @@
+---
+title: "Teaching Marketing Analytics: A Pricing Exercise for Quantitative and Substantive Marketing Skills"
+author: "Authors anonymized for peer review"
+output:
+  html_notebook:
+    theme: united
+    toc: yes
+    toc_float: no
+    toc_depth: 3
+    number_sections: no
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, echo=FALSE}
+options(scipen = 999)
+```
+
+Your B2B firm sells an energy-efficient heater fan and has divided the
+country into 100 comparable sales territories, each staffed exclusively
+by a female sales representative. The sales representatives differ
+according to their professional experience (measured by the number of
+years they have been in sales) and whether they have an engineering
+degree.
+
+The management recently stated that 50% of the sales representatives
+have at least five years of professional experience in sales, and at
+least one-third of the sales representatives also have an engineering
+degree.
+
+The firm's management randomly varied the prices across the sales
+territories.
+
+In addition, the management commissioned an advertising agency to
+support the sales representatives through marketing and provided a
+dedicated budget. The agency should use this marketing budget for
+telephone marketing and social media marketing, with an approximately
+equal allocation towards the two channels (i.e., 50% phone calls and 50%
+social media marketing). So far, the firm's management has randomly
+varied the agency's budget across the sales territories.
+
+The variable cost per unit of a heater fan is \$200.
+
+In the file `data_sales.csv`, you receive information that helps you
+answer the questions. The data set includes 100 rows, each describing
+one of the 100 sales territories with the following variables:
+
++---------------------+----------------------------------------+
+| Variable            | Description                            |
++:====================+:=======================================+
+| `quantity`          | Number of sold heater fans in the      |
+|                     | respective sales territory.            |
++---------------------+----------------------------------------+
+| `price`             | Price of the heater fan sold in the    |
+|                     | respective sales territory.            |
++---------------------+----------------------------------------+
+| `experience`        | Number of years the sales              |
+|                     | representative has been working in     |
+|                     | sales.                                 |
++---------------------+----------------------------------------+
+| `engineer`          | Binary variable indicating whether the |
+|                     | sales representative has an            |
+|                     | engineering degree (= 1) or not (= 0). |
++---------------------+----------------------------------------+
+| `gender`            | Gender of the sales representative,    |
+|                     | female (= 1) or other (= 0).           |
++---------------------+----------------------------------------+
+| `location`          | Number of letters of the sales         |
+|                     | representative's birthplace (e.g., 7   |
+|                     | if the birthplace is "Chicago").       |
++---------------------+----------------------------------------+
+| `budget_agency`     | Budget used by the advertising agency, |
+|                     | which is either spent for phone or     |
+|                     | social media marketing, in \$.         |
++---------------------+----------------------------------------+
+| `budget_phone`      | Budget used for telephone marketing,   |
+|                     | in \$.                                 |
++---------------------+----------------------------------------+
+| `b                  | Budget used for social media           |
+| udget_social_media` | marketing, in \$.                      |
++---------------------+----------------------------------------+
+
+: Table 1: Description of the Data Set `data_sales.csv`
+
+## 1) Exploratory Data Analysis
+
+*For each part of this first exercise, please answer the question by
+analyzing the data set through one visualization and one non-visual
+descriptive analysis.*
+
+*We do not require custom labels for the visualizations.*
+
+### a)
+
+Does the firm only employ female sales representatives? (2 points)
+
+#### Solution
+
+```{r}
+df <- read.csv("data_sales.csv")
+```
+
+```{r}
+summary(df$gender)
+barplot(table(df$gender), main = "Barplot of Gender", xlab = "Gender", ylab = "Number of Sales Territories")
+```
+
+Yes, because the summary statistics and the barplot show that the data
+set only includes `gender = 1`, corresponding to females.
+
+### b)
+
+Do the prices differ across sales territories? (2 points)
+
+#### Solution
+
+```{r}
+summary(df$price)
+hist(df$price, main = "Histogram of Price", xlab = "Price (in $)", ylab = "Number of Sales Territories")
+```
+
+Yes, prices differ across sales territories. For example, the summary
+statistics exhibit different values for the minimum (\$209.4) and
+maximum (\$369.4). Additionally, the histogram shows that prices vary
+across sales territories.
+
+### c)
+
+Is the management's statement regarding the professional experience of
+their sales representatives correct? (2 points)
+
+#### Solution
+
+*Statement to check: Median experience is 5 years*
+
+```{r}
+median(df$experience)
+boxplot(df$experience, main = "Boxplot of Experience", ylab = "Years")
+```
+
+No, because the summary statistics and the boxplot show that the median
+of `experience` is 4. If management's statement ("50% of the sales
+representatives have at least five years of professional experience in
+sales") were true, then the median of `experience` should be 5.
+
+An alternative and equally correct solution is to count the observations
+that have less than 5 years of experience:
+
+```{r}
+table(df$experience)
+sum(df$experience > 5) / nrow(df)
+barplot(table(df$experience), main = "Barplot of Experience", xlab = "Years", ylab = "Number of Sales Territories")
+```
+
+### d)
+
+Is the management's statement regarding the background of their sales
+representatives correct? (2 points)
+
+#### Solution
+
+*Statement to check: At least one-third of sales representatives hold an
+engineering degree.*
+
+```{r}
+table(df$engineer)
+barplot(table(df$engineer), main = "Barplot of Engineering", ylab = "Number of Sales Territories")
+```
+
+Management's statement is incorrect because we only observe that 28 % of
+sales representatives hold an engineering degree, not at least 33%.
+
+$\frac{28}{72 + 28} = 0.28 < \frac{1}{3} \approx 33\%$.
+
+### e)
+
+Does the advertising agency's budget differ across the sales
+territories? (2 points)
+
+#### Solution
+
+```{r}
+summary(df$budget_agency)
+hist(df$budget_agency, main = "Histogram of Budget Agency", xlab = "Budget in $", ylab = "Number of Sales Territories")
+```
+
+Yes, the budgets differ. The summary statistics outline that the minimum
+budget across all sales territories is 329, and the maximum is 2,056.
+Additionally, the histogram shows that the budget varies strongly across
+sales territories.
+
+### f)
+
+Did the advertising agency achieve the aim of approximately equally
+allocating the budget to the two channels (telephone and social media
+marketing)? (2 points)
+
+#### Solution
+
+```{r}
+cor(df$budget_phone, df$budget_social_media)
+plot(df$budget_social_media, df$budget_phone, main = "Scatterplot of Budgets", xlab = "Social Media ($)", ylab = "Telephone ($)")
+```
+
+Yes, all sales territories received almost equal telephone and social
+media marketing budgets. This insight is easiest to observe in the
+scatterplot. The visualization displays the almost perfect linear
+relationship and shows that the social media budget approximately equals
+the telephone marketing budget. The correlation coefficient is almost 1,
+and both budgets' average values are also almost equal.
+
+**Note:** Displaying the individual distributions of the two variables,
+e.g., via a histogram, is insufficient because a similar distribution of
+two variables is a necessary but not a sufficient condition for similar
+budgets in all sales territories.
+
+### g)
+
+Were the sales representatives born in at least 8 different cities? (2
+points)
+
+#### Solution
+
+```{r}
+nrow(table(df$location))
+barplot(table(df$location), main = "Barplot of Location", xlab = "Number of Characters in City Name", ylab = "Number of Sales Territories")
+```
+
+Yes, because the data set includes 11 different values of `location`,
+which implies that the sales representatives were born in *at least* 11
+cities.
+
++-------------+-------------+-------------+-------------+
+| Step        | Task        | Max. Points | Achieved    |
+|             |             |             | Points      |
++:============+:============+:============+:============+
+| 1-a         | Correct     | 2           |             |
+|             | vi          |             |             |
+|             | sualization |             |             |
+|             | (1 point),  |             |             |
+|             | correct     |             |             |
+|             | non-visual  |             |             |
+|             | descriptive |             |             |
+|             | statistic   |             |             |
+|             | (1 point).  |             |             |
++-------------+-------------+-------------+-------------+
+| 1-b         | see above   | 2           |             |
++-------------+-------------+-------------+-------------+
+| 1-c         | see above   | 2           |             |
++-------------+-------------+-------------+-------------+
+| 1-d         | see above   | 2           |             |
++-------------+-------------+-------------+-------------+
+| 1-e         | see above   | 2           |             |
++-------------+-------------+-------------+-------------+
+| 1-f         | see above   | 2           |             |
++-------------+-------------+-------------+-------------+
+| 1-g         | see above   | 2           |             |
++-------------+-------------+-------------+-------------+
+
+## 2) Estimating a Demand Function
+
+Estimate a linear demand function. Justify which variables you include
+and which ones you ignore. Discuss the influence of price and
+professional experience on the quantity and how confident you are about
+their influence. (14 points)
+
+#### Solution
+
+##### **Step 1:** Identify the variables to include in the linear regression equation.
+
+Include all variables except:
+
+-   `gender`, because it only has the value 1 and, thus, no variation.
+-   `location`, because there is no plausible reason why the character
+    length of the sales representative's city of birth should impact
+    sales.
+-   `budget_phone` and `budget_social_media`, because
+    -   the two variables are almost perfectly collinear (50% share each
+        and correlation is almost 1), and
+
+    -   the sum of both variables is a linear combination corresponding
+        to the third variable `budget_agency`, leading to perfect
+        multicollinearity:
+        `budget_agency = budget_phone + budget_social_media`.
+
+##### **Step 2: Use a linear regression to estimate** the linear demand function
+
+###### Most Suitable Model
+
+```{r, warning=FALSE, message=FALSE}
+reg_model_1 <- lm(quantity ~ price + experience + engineer + budget_agency, data = df)
+```
+
+###### Acceptable Models
+
+```{r, warning=FALSE, message=FALSE}
+reg_model_2 <- lm(quantity ~ price + experience + engineer + budget_phone, data = df)
+reg_model_3 <- lm(quantity ~ price + experience + engineer + budget_social_media, data = df)
+
+library(stargazer)
+stargazer(reg_model_1, reg_model_2, reg_model_3, type = "text", header = FALSE)
+```
+
+###### Incorrect Models
+
+```{r, warning=FALSE, message=FALSE}
+# Including two out of three variables `budget_agency`, `budget_phone`, and `budget_social_media`
+reg_model_4 <- lm(quantity ~ price + experience + engineer + budget_phone + budget_social_media,
+               data = df)
+
+# Including all three multicollinear independent variables `budget_agency`, `budget_phone`, and `budget_social_media`
+reg_model_5 <- lm(quantity ~ price + experience + engineer + budget_agency + budget_phone + budget_social_media,
+               data = df)
+
+stargazer(reg_model_4, reg_model_5, type = "text", header = FALSE, column.labels = c("(4)", "(5)"), model.numbers = FALSE)
+```
+
+*Notes concerning model selection:*
+
+Model 1 is the preferred model according to the justification from
+Step 1. In the incorrect model 4, we see the effects of collinearity
+between the two variables `budget_phone` and `budget_social_media` (as
+observed through their correlation, which is very close to 1) on the
+estimated coefficients. The coefficients in model 4 have different
+signs, even though the overall effect (model 1) and the effect of each
+variable alone in models 2 and 3 are positive. Additionally, the sum of
+the coefficients of the variables `budget_phone` and
+`budget_social_media` in model 4 is similar in magnitude to the total
+effect, i.e., the coefficient of the variable `budget_agency` in model
+1.
+
+##### **Step 3:** Interpretation of Model 1
+
+If the price increases by \$1, the (expected) quantity decreases by
+2.954 units.
+
+For each additional year of work experience, the (expected) quantity
+increases by 9.034 units.
+
+Both coefficients display *p*-values smaller than 1%. Hence, we are very
+confident that we can reject the null hypothesis that the coefficient is
+not different from zero. Formulated differently, we are confident that
+the estimated effects differ from zero.
+
++--------------+--------------+--------------+--------------+
+| Step         | Task         | Max. Points  | Achieved     |
+|              |              |              | Points       |
++==============+==============+==============+==============+
+| 2-1          | Correct      | 6            |              |
+|              | j            |              |              |
+|              | ustification | (6 Points    |              |
+|              | of which     | for the      |              |
+|              | dependent    | correct      |              |
+|              | and          | model. 1     |              |
+|              | independent  | point        |              |
+|              | variables to | deduction    |              |
+|              | include in   | for each     |              |
+|              | the linear   | incorrectly  |              |
+|              | regression.  | included or  |              |
+|              |              | excluded     |              |
+|              |              | variable.    |              |
+|              |              | 0.5 points   |              |
+|              |              | deduction if |              |
+|              |              | the correct  |              |
+|              |              | decision but |              |
+|              |              | not          |              |
+|              |              | justified.)  |              |
++--------------+--------------+--------------+--------------+
+| 2-2          | Estimate     | 2            |              |
+|              | regression   |              |              |
+|              | with `lm()`  |              |              |
+|              | and print    |              |              |
+|              | `summary()`. |              |              |
++--------------+--------------+--------------+--------------+
+| 2-3          | Interpret    | 3            |              |
+|              | the          |              |              |
+|              | estimated    | (1.5 points  |              |
+|              | coefficient  | for          |              |
+|              | of `price`   | magnitude    |              |
+|              | correctly.   | and          |              |
+|              |              | statistical  |              |
+|              |              | s            |              |
+|              |              | ignificance, |              |
+|              |              | each)        |              |
++--------------+--------------+--------------+--------------+
+| 2-4          | Interpret    | 3            |              |
+|              | the          |              |              |
+|              | estimated    | (1.5 points  |              |
+|              | coefficient  | for          |              |
+|              | of           | magnitude    |              |
+|              | `experience` | and          |              |
+|              | correctly.   | statistical  |              |
+|              |              | s            |              |
+|              |              | ignificance, |              |
+|              |              | each)        |              |
++--------------+--------------+--------------+--------------+
+
+## 3) Compute Advertising and Price Elasticities of Demand
+
+Use your model to compute the price elasticity of demand and the
+(advertising) budget elasticity of demand. Interpret these elasticities
+and assess whether your computed elasticities are consistent with
+economic intuition. (12 Points)
+
+#### Solution
+
+First, note that elasticities in a linear demand model are not constant.
+Hence, the elasticity depends on the independent
+variable's value. Students must pick a sensible value for both variables
+to compute the elasticities (advertising budget and price).
+A good choice would be to select the average values.
+
+```{r}
+elasticity_budget <- coefficients(reg_model_1)["budget_agency"] * mean(df$budget_agency) / mean(df$quantity)
+elasticity_budget
+
+elasticity_price <- coefficients(reg_model_1)["price"] * mean(df$price) / mean(df$quantity)
+elasticity_price
+```
+
+Interpretation of the elasticities:
+
+At the average budget, a 1% increase in advertising budget yields a
+0.06% increase in demand. Thus, the value of the advertising elasticity
+is 0.06. A positive advertising elasticity makes economic sense because
+more advertising should yield higher demand. The value is low but
+broadly in line with findings from meta-analytical studies (e.g.,
+Sethuraman, Tellis, and Briesch: 0.11)
+
+At the average price, a 1% increase in price yields a 2.29% decrease in
+demand. So, the value of the price elasticity is ‑2.29. The size of this
+value is plausible because a higher price yields a lower demand. The
+value also aligns with findings from meta-analytical studies (e.g.,
+Tellis 1988: -1.76; Bijmolt, Herde, and Pieters 2005: -2.62).
+
++-------------+---------------------+-------------+-------------+
+| Step        | Task                | Max. Points | Achieved    |
+|             |                     |             | Points      |
++=============+=====================+=============+=============+
+| 3-1         | Mentioning that     | 2           |             |
+|             | elasticities from a |             |             |
+|             | linear demand       |             |             |
+|             | function are not    |             |             |
+|             | constant.           |             |             |
++-------------+---------------------+-------------+-------------+
+| 3-2         | Sensible choice of  | 2           |             |
+|             | values at which to  |             |             |
+|             | compute the         |             |             |
+|             | elasticities (e.g., |             |             |
+|             | mean, median,       |             |             |
+|             | profit-maximizing   |             |             |
+|             | value).             |             |             |
++-------------+---------------------+-------------+-------------+
+| 3-3         | Correct computation | 4           |             |
+|             | of the two          |             |             |
+|             | elasticities.       |             |             |
++-------------+---------------------+-------------+-------------+
+| 3-4         | Correct             | 2           |             |
+|             | interpretation of   |             |             |
+|             | the two computed    |             |             |
+|             | elasticities.       |             |             |
++-------------+---------------------+-------------+-------------+
+| 3-4         | Correct evaluation  | 2           |             |
+|             | of the two computed |             |             |
+|             | elasticities'       |             |             |
+|             | plausibility        |             |             |
++-------------+---------------------+-------------+-------------+
+
+## 4) Determine the Optimal Price
+
+A sales representative with three years of professional experience and
+an engineering degree operates in a sales territory. In addition, the
+advertising agency spends a budget of \$2,000, allocating 50% to
+telephone and 50% to social media marketing. Determine the optimal price
+in this setting and explain the steps you take to arrive at your result.
+Assume fixed costs of zero. What is the contribution margin per unit and
+the firm's profit? (20 points)
+
+#### Solution
+
+##### **Step 1:** Write the demand function with regression coefficients from the most preferred model
+
+Notation ($equation$ / `code`):
+
+-   $q$ / `q`: quantity sold
+-   $q_c$ / `q_c`: quantity sold without price term, constant
+-   $p$ / `p`: price
+-   $c_v$ / `c_v`: variable costs
+
+$$
+\hat{q} = \hat{\beta}_0 + \hat{\beta}_1 \cdot p + \hat{\beta}_2 \cdot experience + \hat{\beta}_3 \cdot engineer +\hat{\beta}_4 \cdot budget\_agency
+$$ $$
+\hat{q} = \hat{q}_c + \hat{\beta}_1 \cdot p
+$$
+
+where $\hat{q}$ is the (expected value of) quantity.\
+$\hat{q}_c$ is the expected quantity without considering the price term:
+
+$$
+\hat{q}_c = \hat{\beta}_0 +
+        \hat{\beta}_2 \cdot experience +
+        \hat{\beta}_3 \cdot engineer + 
+        \hat{\beta}_4 \cdot budget\_agency
+$$
+
+##### **Step 2:** Compute $\hat{q}_c$, the expected quantity without the impact of the price
+
+```{r}
+coef <- coefficients(reg_model_1)
+
+q_c <- coef["(Intercept)"] + coef["experience"] * 3 + coef["engineerYes"] * 1 + coef["budget_agency"] * 2000
+```
+
+##### **Step 3:** Set up the cost and profit functions
+
+*Cost function*
+
+$$
+c(\hat{q}) = c_v \cdot \hat{q} 
+     = c_v \cdot (\hat{q}_c + \hat{\beta}_1 \cdot p)
+$$
+
+*Profit function*
+
+$$
+\pi = p \cdot \hat{q} - c(\hat{q})
+$$$$
+    = p \cdot (\hat{q}_c + \hat{\beta}_1 \cdot p) - [c_v \cdot (\hat{q}_c + \hat{\beta}_1 \cdot p)]
+$$$$
+    = p \hat{q}_c + p^2 \hat{\beta}_1 - c_v \hat{q}_c - c_v \hat{\beta}_1 p
+$$
+
+##### **Step 4:** Take the first derivative of the profit function with respect to $p$ and set it equal to zero
+
+$$
+\frac{\partial \pi}{\partial p} = \hat{q}_c + 2p \hat{\beta}_1 - c_v\hat{\beta}_1  = 0
+$$
+
+##### **Step 5:** Rearrange the function to get the optimal price $p^*$
+
+$$
+p^* = \frac{1}{2}(c_v - \frac{\hat{q}_c}{\hat{\beta}_1})
+$$
+
+##### **Step 6:** Compute the optimal price by inserting the computed values from the above steps
+
+```{r}
+c_v <- 200
+```
+
+```{r}
+p_star <- 0.5 * (c_v - (q_c / coef["price"]))
+p_star
+```
+
+##### **Step 7:** Compute the profit contribution per unit
+
+```{r}
+profit_contribution_unit <- p_star - c_v
+profit_contribution_unit
+```
+
+##### **Step 8:** Compute the (total) profit
+
+```{r}
+q_star <- q_c + coef["price"] * p_star
+profit_total <- q_star * profit_contribution_unit
+```
+
+The optimal price is \$`r round(p_star, 2)`. The profit contribution per
+unit amounts to \$`r round(profit_contribution_unit, 2)`. The firm sells
+`r round(q_star)` units of the heater fan, yielding a profit of
+\$`r round(profit_total, 2)`.
+
++-------------+----------------------------+-------------+-------------+
+| Step        | Task                       | Max. Points | Achieved    |
+|             |                            |             | Points      |
++:============+:===========================+:============+:============+
+| 4-1         | Description: Set up demand | 2           |             |
+|             | function with regression   |             |             |
+|             | coefficients.              |             |             |
++-------------+----------------------------+-------------+-------------+
+| 4-2         | Description: Constant      | 2           |             |
+|             | demand $\hat{q}_c$         |             |             |
+|             | includes all terms from    |             |             |
+|             | the regression equation    |             |             |
+|             | excluding the price term.  |             |             |
++-------------+----------------------------+-------------+-------------+
+| 4-3         | Description: Set up the    | 2           |             |
+|             | profit function and insert |             |             |
+|             | the demand function into   |             |             |
+|             | the profit function.       |             |             |
++-------------+----------------------------+-------------+-------------+
+| 4-4         | Description: Take the      | 2           |             |
+|             | first derivative of the    |             |             |
+|             | profit function with       |             |             |
+|             | respect to $p$ and set it  |             |             |
+|             | equal to zero.             |             |             |
++-------------+----------------------------+-------------+-------------+
+| 4-5         | Description: Rearrange and | 2           |             |
+|             | solve for the optimal      |             |             |
+|             | price $p^*$.               |             |             |
++-------------+----------------------------+-------------+-------------+
+| 4-6         | State the correct formula  | 2           |             |
+|             | for the optimal price.     |             |             |
++-------------+----------------------------+-------------+-------------+
+| 4-7         | Compute the                | 2           |             |
+|             | expected quantity          |             |             |
+|             | (constant) without the     |             |             |
+|             | price term correctly.      |             |             |
++-------------+----------------------------+-------------+-------------+
+| 4-8         | Compute the optimal        | 2           |             |
+|             | price correctly.           |             |             |
++-------------+----------------------------+-------------+-------------+
+| 4-9         | Compute the profit         | 2           |             |
+|             | contribution per unit      |             |             |
+|             | correctly.                 |             |             |
++-------------+----------------------------+-------------+-------------+
+| 4-10        | Compute the firm's         | 2           |             |
+|             | profit correctly.          |             |             |
++-------------+----------------------------+-------------+-------------+
+
+## 5) Impact of Changes on Optimal Prices
+
+Answer the following two sub-questions by ticking the correct answer.
+
+### a)
+
+How does the optimal price change if a sales representative without an
+engineering degree works in the sales territory instead of a sales
+representative with an engineering degree? (2 points)
+
+The optimal price...
+
+-   increases
+-   decreases
+-   remains about the same
+-   no statement possible
+
+#### Solution
+
+The optimal price remains about the same.
+
+*Explanation (not required):*
+
+Changes in the regression parameter of `engineerYes` cause a parallel
+shift of the demand curve (upwards if positive, downwards if negative)
+or leave the demand curve unaffected if it is statistically
+insignificantly different from zero.
+
+In our case, the parameter estimate of `engineerYes` is statistically
+insignificantly different from zero. Hence, we can expect that the
+demand curve does not change much, implying that the optimal price
+remains the same.
+
+The following computation of the optimal price for a sales
+representative without an engineering degree supports this claim:
+
+```{r}
+q_c_no_engineer <- coef["(Intercept)"] + coef["experience"] * 3 + coef["budget_agency"] * 2000
+p_star_no_engineer <- 0.5 * (c_v - (q_c_no_engineer / coef["price"]))
+```
+
+compared to the optimal price *with* an engineering degree
+
+```{r}
+p_star
+p_star_no_engineer
+p_star - p_star_no_engineer
+```
+
+The optimal price of a sales representative without an engineering
+degree is \$`r round(p_star_no_engineer, 2)`, and with an engineering
+degree is \$`r round(p_star, 2)`. The price difference is only
+\$`r round(p_star - p_star_no_engineer, 2)`.
+
+Conclusion: The magnitude of the difference between the two optimal
+prices is very small and statistically insignificantly different from
+zero ($p>0.1$). Hence, the optimal price remains about the same.
+
+### b)
+
+How does the optimal price change if a sales representative with only
+one year of professional experience works in the sales territory instead
+of a sales representative with three years of professional experience?
+(2 points)
+
+The optimal price...
+
+-   increases
+-   decreases
+-   remains about the same
+-   no statement possible
+
+#### Solution
+
+The optimal price decreases
+
+*Explanation (not required):*
+
+Similar to the above exercise, we must consider how the demand function
+changes. The demand function changes significantly because the
+`experience` regression parameter is statistically significantly
+positive.
+
+Hence, a decrease in the level of experience from `3` to `1` (`= -2`)
+years causes a parallel downward shift of the demand function. This
+change leads to lower demand. Thus, the optimal price decreases.
+
+The following computation of the optimal price with one year of
+experience supports this claim.
+
+```{r}
+q_c_one_year_experience <- coef["(Intercept)"] + coef["experience"] * 1 + coef["engineerYes"] * 1 +
+  coef["budget_agency"] * 2000
+
+p_star_one_year_experience <- 0.5 * (c_v - (q_c_one_year_experience / coef["price"]))
+```
+
+compared with the optimal price with three years of experience:
+
+```{r}
+p_star
+p_star_one_year_experience
+
+p_star_one_year_experience - p_star
+```
+
+The optimal price of a sales representative with a one-year experience is
+\$`r round(p_star_one_year_experience, 2)`, and with a three-year
+experience, \$`r round(p_star, 2)`. The price difference is only
+\$`r round(p_star_one_year_experience - p_star, 2)`.
+
+Conclusion: the optimal price decreases by
+\$`r -round(p_star - p_star_one_year_experience, 2)`, and the
+coefficient on the variable `experience` is statistically significantly
+different from zero ($p < 0.01$).
+
++--------------+--------------+--------------+--------------+
+| Step         | Task         | Max. Points  | Achieved     |
+|              |              |              | Points       |
++:=============+:=============+:=============+:=============+
+| 5-a          | Correct      | 2            |              |
+|              | answer       |              |              |
++--------------+--------------+--------------+--------------+
+| 5-b          | Correct      | 2            |              |
+|              | answer       |              |              |
++--------------+--------------+--------------+--------------+
+
+## 6) Marketing Budget Allocation
+
+The management wants to know whether it should spend the marketing
+budget on telephone marketing or social media marketing. Which
+recommendation can you give based on your analyses? (2 points)
+
+#### Solution
+
+In this case, no conclusion is possible because the firm always
+allocated 50% of the budget to telephone marketing and 50% to social
+media marketing in each sales territory. Hence, the two budget variables,
+`budget_phone` and `budget_social_media`, are almost perfectly collinear,
+making the correct estimation of each variable's effect on the quantity
+sold impossible.
+
+| Step | Task           | Max. Points | Achieved Points |
+|:-----|:---------------|:------------|:----------------|
+| 6    | Correct answer | 2           |                 |
+
+## 7) Performance and Compensation of Sales Representatives
+
+#### a)
+
+Do female sales representatives sell more than non-female sales
+representatives? (2 points)
+
+*Answer this question based on your previous results.*
+
+##### Solution
+
+No answer is possible because the data set only includes female sales
+representatives.
+
+#### b)
+
+Do business outcomes justify paying sales representatives with an
+engineering degree a higher salary than those without an engineering
+degree? (2 points)
+
+*Answer this question based on your previous results.*
+
+##### Solution
+
+No, because the expected sold quantity does not differ whether a person
+holds an engineering degree (see `engineerYes`). While the estimated
+coefficient is positive, it is not statistically significantly different
+from zero ($p > 0.1$).
+
+Decrease in estimated sales without an engineering degree:
+
+```{r}
+- coef["engineerYes"]
+```
+
+Decrease of profit:
+
+```{r}
+- coef["engineerYes"] * profit_contribution_unit
+```
+
+The profit decreases by
+\$`r round(- coef["engineerYes"] * profit_contribution_unit, 2)`.
+However, this effect is very small compared to the profit of
+\$`r round(profit_total, 2)`. Additionally, the coefficient estimate of
+`engineerYes` is not statistically significantly different from zero
+($p>0.1$).
+
+#### c)
+
+Do business outcomes justify paying sales representatives with more
+professional experience a higher salary than those with less
+professional experience? (2 points)
+
+*Answer this question based on your previous results.*
+
+##### Solution
+
+Yes, because the expected quantity increases by
+`r round(coef["experience"], 2)` units for each additional year of
+experience. The profit contribution per unit is
+\$`r round(profit_contribution_unit, 2)`, so
+`r round(coef["experience"], 2)` additionally sold units increase the
+profit by \$`r round(coef["experience"] * profit_contribution_unit, 2)`
+(= `r round(coef["experience"], 2)` \*
+\$`r round(profit_contribution_unit, 2)`). Additionally, the estimated
+coefficient on the variable `experience` is statistically significantly
+different from zero ($p<0.01$).
+
+Thus, business outcomes justify a higher salary for more experienced
+sales representatives.
+
++--------------+-----------------+---------------+--------------+
+| Step         | Task            | Max. Points   | Achieved     |
+|              |                 |               | Points       |
++:=============+:================+:==============+:=============+
+| 7-a          | Correct answer, | 2             |              |
+|              | stating that no |               |              |
+|              | conclusion is   |               |              |
+|              | possible.       |               |              |
++--------------+-----------------+---------------+--------------+
+| 7-b          | Correct answer, | 2             |              |
+|              | including       |               |              |
+|              | stating that    | (0.5 points   |              |
+|              | the coefficient | deduction if  |              |
+|              | is not          | no level of   |              |
+|              | statistically   | significance  |              |
+|              | significantly   | is defined)   |              |
+|              | different from  |               |              |
+|              | zero.           |               |              |
++--------------+-----------------+---------------+--------------+
+| 7-c          | Correct         | 2             |              |
+|              | conclusion      |               |              |
+|              | based on        |               |              |
+|              | regression      |               |              |
+|              | estimates.      |               |              |
++--------------+-----------------+---------------+--------------+
