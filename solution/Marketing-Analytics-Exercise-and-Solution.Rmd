@@ -149,7 +149,7 @@ that have less than 5 years of experience:
 
 ```{r}
 table(df$experience)
-sum(df$experience > 5) / nrow(df)
+sum(df$experience >= 5) / nrow(df)
 barplot(table(df$experience), main = "Barplot of Experience", xlab = "Years", ylab = "Number of Sales Territories")
 ```
 
@@ -348,8 +348,7 @@ the estimated effects differ from zero.
 |              |              |              | Points       |
 +==============+==============+==============+==============+
 | 2-1          | Correct      | 6            |              |
-|              | j            |              |              |
-|              | ustification | (6 Points    |              |
+|              | justification| (6 Points    |              |
 |              | of which     | for the      |              |
 |              | dependent    | correct      |              |
 |              | and          | model. 1     |              |
