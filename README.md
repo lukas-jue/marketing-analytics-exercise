@@ -1,5 +1,5 @@
 # Teaching Marketing Analytics: A Pricing Exercise for Quantitative and Substantive Marketing Skills
-This repository contains the exercise, solution, and data described in Skiera and Jürgensmeier (2023): "Teaching Marketing Analytics: A Pricing Exercise for Quantitative and Substantive Marketing Skills"
+This repository contains the exercise, solution, and data described in Skiera, Bernd and Lukas Jürgensmeier (2024): "Teaching Marketing Analytics: A Pricing Exercise for Quantitative and Substantive Marketing Skills," forthcoming in the *Journal of Marketing Analytics*, DOI: 10.1057/s41270-024-00313-2.
 
 
 # Abstract
